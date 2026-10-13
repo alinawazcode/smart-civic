@@ -1,0 +1,6 @@
+{
+  "name": "Smart Civic Complaint Triage System",
+  "description": "Smart Civic Complaint Triage System - Bilingual complaint reporting, automated triage, GIS tracking, and municipal workflow.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

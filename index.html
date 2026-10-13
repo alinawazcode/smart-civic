@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Defensive guard for browser extensions (interceptors) attempting to overwrite window.fetch
+      (function() {
+        try {
+          var _rawFetch = window.fetch;
+          var _currentFetch = function() {
+            return (_rawFetch || window.fetch).apply(this, arguments);
+          };
+          if (typeof _rawFetch === 'function') {
+            _currentFetch = _rawFetch.bind(window);
+          }
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return _currentFetch;
+            },
+            set: function(newFetch) {
+              _currentFetch = newFetch;
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (_err) {
+          // Fallback if property is non-configurable
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Civic Complaint Triage System</title>
+    <meta name="description" content="Smart Civic Complaint Triage System - Real-time AI classification, 50m spatial deduplication, bilingual English & Urdu interface, and municipal dispatch." />
+    <meta property="og:title" content="Smart Civic Complaint Triage System" />
+    <meta property="og:description" content="Smart Civic Complaint Triage System - Real-time AI classification, 50m spatial deduplication, bilingual English & Urdu interface, and municipal dispatch." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    <!-- Google Fonts: Inter, Noto Nastaliq Urdu, Noto Naskh Arabic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  </head>
+  <body class="bg-[#F5F8F7] text-[#14231F] antialiased selection:bg-[#E6F4EF] selection:text-[#166F57]">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

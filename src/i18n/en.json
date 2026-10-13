@@ -1,0 +1,399 @@
+{
+  "brand": {
+    "name": "Smart Civic Complaint Triage System",
+    "shortName": "Smart Civic",
+    "tagline": "Cleaner Streets · Safer Communities · A Smarter City",
+    "heroTitle": "Report. Track. See Real Change.",
+    "heroDesc": "Report street infrastructure issues in seconds. Our AI-assisted triage system clusters duplicates, assesses public safety risk, and dispatches municipal crews quickly.",
+    "demoNotice": "Official Municipal Complaint & Dispatch Portal",
+    "sampleData": "Official records"
+  },
+  "nav": {
+    "home": "Home",
+    "report": "Report",
+    "track": "Track",
+    "transparency": "Transparency",
+    "modelReport": "AI Model Report",
+    "help": "Help",
+    "login": "Login",
+    "staffPortal": "Staff Portal",
+    "adminPortal": "Admin Portal",
+    "logout": "Sign Out",
+    "roleSwitcher": "Role",
+    "role": {
+      "resident": "Resident",
+      "staff": "Staff",
+      "admin": "Admin"
+    }
+  },
+  "categories": {
+    "streetlight": "Streetlights",
+    "road_damage": "Roads & Potholes",
+    "garbage": "Garbage & Waste",
+    "water_leak": "Water Leakage",
+    "blocked_drain": "Drainage & Sewerage"
+  },
+  "status": {
+    "submitted": "Submitted",
+    "triaged": "Triaged",
+    "assigned": "Assigned",
+    "in_progress": "In Progress",
+    "on_hold": "On Hold",
+    "resolved": "Resolved",
+    "closed": "Closed",
+    "reopened": "Reopened"
+  },
+  "priority": {
+    "high": "High Priority",
+    "medium": "Medium Priority",
+    "low": "Low Priority"
+  },
+  "home": {
+    "reportCta": "Report an Issue",
+    "trackCta": "Track Complaint",
+    "stats": {
+      "total": "Total Reports",
+      "resolved": "Resolved",
+      "inProgress": "In Progress",
+      "onTime": "On-Time SLA Rate"
+    },
+    "heroCard": {
+      "title": "Streetlight Issue",
+      "location": "Gulshan-e-Iqbal, Block 4",
+      "badge": "High Priority",
+      "reportsCount": "3 reports merged"
+    },
+    "howItWorks": {
+      "title": "How CivicCare Works",
+      "subtitle": "From citizen reporting to municipal closure in 4 transparent stages",
+      "step1Title": "1. Report in Seconds",
+      "step1Desc": "Upload a photo and pin location. Describe in English, Urdu, or Roman Urdu.",
+      "step2Title": "2. AI Triage & Deduplication",
+      "step2Desc": "Multi-modal AI classifies category, detects 50m duplicates, and scores severity.",
+      "step3Title": "3. Dispatch & Fix",
+      "step3Desc": "Assigned department crew resolves problem with verifiable GPS timestamps.",
+      "step4Title": "4. Verify & Close",
+      "step4Desc": "Admin inspects before-and-after photo evidence before final closure."
+    },
+    "recentResolved": {
+      "title": "Recent Verified Resolutions",
+      "subtitle": "Transparent before-and-after proof across Karachi districts",
+      "before": "Before",
+      "after": "After Fixed",
+      "resolvedIn": "Resolved in"
+    },
+    "ctaSection": {
+      "title": "See an issue in your neighborhood?",
+      "desc": "Help your community stay clean, safe, and well-maintained. File a complaint in less than two minutes.",
+      "button": "File a Report Now"
+    }
+  },
+  "report": {
+    "title": "Report a Civic Issue",
+    "subtitle": "Help municipal teams locate and resolve street faults promptly",
+    "steps": {
+      "details": "1. Details",
+      "location": "2. Location",
+      "review": "3. Review"
+    },
+    "langHint": {
+      "en": "English",
+      "ur": "اردو",
+      "roman-ur": "Roman Urdu"
+    },
+    "langHintText": {
+      "en": "Describe the fault clearly, e.g. 'Street light broken near Main Market'",
+      "ur": "مسئلہ تفصیل سے بیان کریں، مثلاً 'مین مارکیٹ کے قریب اسٹریٹ لائٹ خراب ہے'",
+      "roman-ur": "Masla tafseel se likhein, maslan 'Main market k pas street light kharab hai'"
+    },
+    "categoryLabel": "Issue Category",
+    "categoryPlaceholder": "Select category of issue",
+    "descLabel": "Detailed Description",
+    "descPlaceholder": "Describe the problem, severity, landmarks or hazards (10 to 1000 characters)...",
+    "photoLabel": "Upload Photo Evidence",
+    "photoDropzone": "Drag and drop a photo, or click to browse",
+    "photoHelp": "JPG, PNG or WebP up to 5 MB. Clear photos expedite triage.",
+    "photoRemove": "Remove photo",
+    "location": {
+      "searchPlaceholder": "Search Karachi area or landmark (e.g. PECHS, Korangi, DHA)...",
+      "useMyLocation": "Use My Current Location",
+      "locPermissionDenied": "Location permission denied. Please click on the map or drag the pin manually.",
+      "pinInstruction": "Drag the green pin or click anywhere on the map to set exact coordinates.",
+      "selectedCoordinates": "Coordinates",
+      "selectedArea": "Approximate Area",
+      "nearbyAlertTitle": "Already reported nearby (within ~50m)",
+      "nearbyAlertDesc": "Similar reports were found at this location. You can add your voice to an existing ticket to raise its priority score instead of filing a duplicate.",
+      "addToExisting": "Add my report to this one",
+      "noNearby": "No nearby duplicate tickets found within 50m."
+    },
+    "review": {
+      "heading": "Review Your Submission",
+      "subheading": "Confirm details before our AI system assigns routing & priority.",
+      "anonymousLabel": "Submit anonymously",
+      "anonymousHelp": "Your name won't be shown to field crews or public transparency dashboards.",
+      "contactLabel": "Contact Phone / Email (Optional)",
+      "contactPlaceholder": "0300-1234567 or email for SMS/email tracking updates",
+      "submitBtn": "Submit Civic Complaint",
+      "submitting": "Classifying & Submitting...",
+      "back": "Back",
+      "next": "Continue to Next Step",
+      "terms": "By submitting, you certify this report represents a genuine civic fault."
+    },
+    "errors": {
+      "categoryRequired": "Please select an issue category.",
+      "descTooShort": "Description must be at least 10 characters.",
+      "descTooLong": "Description cannot exceed 1000 characters.",
+      "photoRequired": "Please attach at least one photo of the issue.",
+      "photoTooLarge": "File exceeds the 5 MB limit. Please upload a smaller image.",
+      "locationRequired": "Please place a pin or select a valid location on the map."
+    }
+  },
+  "confirmation": {
+    "title": "Your complaint has been submitted!",
+    "subtitle": "Thank you for helping improve our city. Your report has entered the automated triage queue.",
+    "codeLabel": "Tracking Code",
+    "copyCode": "Copy Code",
+    "copied": "Copied to clipboard!",
+    "qrCodeTitle": "Scan with smartphone to track anytime",
+    "viewDetails": "View Complaint Status",
+    "trackAnother": "Track Another Issue",
+    "mergedNotice": "Your report was linked with an active cluster! Priority score has been boosted.",
+    "nextStepsTitle": "What happens next?",
+    "step1": "AI classifies image and description into municipal domain",
+    "step2": "Duplicates are automatically grouped into spatial clusters",
+    "step3": "Priority score is calculated from safety risk and urgency factors",
+    "step4": "Municipal field crew is assigned with SLA deadline clock"
+  },
+  "track": {
+    "title": "Track Your Complaint",
+    "subtitle": "Check live status, assigned department, SLA timer, and resolution proof.",
+    "inputPlaceholder": "Enter tracking code (e.g. CC-2026-001238)",
+    "trackBtn": "Track Complaint",
+    "notFoundTitle": "No complaint found with this code",
+    "notFoundDesc": "Please double-check the tracking code format (e.g. CC-2026-XXXXXX) or submit a new report.",
+    "details": {
+      "reportedAgo": "Reported",
+      "clusterCount": "duplicate reports merged",
+      "assignedTo": "Assigned Department",
+      "slaRemaining": "SLA Deadline",
+      "overdue": "OVERDUE",
+      "onTime": "Within SLA",
+      "timelineTitle": "Status Timeline",
+      "resolutionProof": "Resolution Evidence (Before & After)",
+      "confirmFixed": "Confirm Fixed (Resident)",
+      "confirmedThanks": "Thank you! Resolution satisfaction recorded.",
+      "reopen": "Reopen Issue",
+      "reopenNotice": "Reopen is available within 7 days of resolution.",
+      "reopenSuccess": "Ticket reopened for municipal review."
+    }
+  },
+  "transparency": {
+    "title": "Public Transparency Portal",
+    "subtitle": "Real-time municipal performance metrics and open geo-complaint registry.",
+    "notice": "Public map protects privacy: photos and private resident identifiers are hidden.",
+    "tabs": {
+      "all": "All Reports",
+      "open": "Open & Triaged",
+      "in_progress": "In Progress",
+      "resolved": "Resolved"
+    },
+    "filterCategory": "All Categories",
+    "downloadCsv": "Download CSV",
+    "downloadGeoJson": "Download GeoJSON",
+    "popup": {
+      "code": "Code",
+      "category": "Category",
+      "priority": "Priority",
+      "view": "Track this Ticket"
+    }
+  },
+  "modelReport": {
+    "title": "AI Model Evaluation & Transparency",
+    "subtitle": "Multi-modal text + vision classification benchmark for civic ticket triage",
+    "tabs": {
+      "overview": "Overview & Architecture",
+      "performance": "Model Metrics",
+      "confusionMatrix": "Confusion Matrix",
+      "failureCases": "Failure Case Analysis"
+    },
+    "metrics": {
+      "accuracy": "Overall Accuracy",
+      "precision": "Weighted Precision",
+      "recall": "Macro Recall",
+      "f1": "F1-Score"
+    },
+    "matrixDesc": "Normalized confusion matrix across 5 civic categories (Predicted vs Ground Truth)",
+    "failure": {
+      "title": "Recent Model Failure Cases",
+      "desc": "Audited samples where vision/text multimodal fusion disagreed or low confidence triggered human review.",
+      "predicted": "Predicted",
+      "actual": "Actual Ground Truth",
+      "confidence": "Confidence",
+      "reason": "Analysis"
+    }
+  },
+  "staff": {
+    "title": "Field Staff Task Portal",
+    "subtitle": "My Assigned Field Tasks & Resolution Submissions",
+    "tabs": {
+      "all": "All Tasks",
+      "highPriority": "High Priority",
+      "dueSoon": "SLA Due Soon"
+    },
+    "table": {
+      "code": "Ticket Code",
+      "category": "Category",
+      "title": "Description",
+      "area": "District",
+      "priority": "Priority",
+      "sla": "SLA Remaining",
+      "action": "Action"
+    },
+    "detail": {
+      "updateStatus": "Update Status",
+      "tabs": {
+        "details": "Task Details",
+        "classification": "AI Classification",
+        "priority": "Priority Breakdown",
+        "audit": "Audit Trail"
+      },
+      "actionsCard": {
+        "title": "Field Action Console",
+        "addNote": "Add Internal Field Note",
+        "notePlaceholder": "Enter crew notes or status update...",
+        "submitNote": "Save Note",
+        "uploadAfter": "Submit Resolution Evidence",
+        "afterPhotoLabel": "Upload After-Fix Photograph",
+        "captureGps": "Verify GPS location matches work site",
+        "submitResolution": "Submit For Admin Closure",
+        "adminNotice": "Note: An admin verifies and closes tickets after reviewing your after photo."
+      },
+      "classificationDetails": {
+        "textGuess": "Text Model Prediction",
+        "imageGuess": "Vision Model Prediction",
+        "fused": "Fused Ensemble Category",
+        "confidence": "Confidence Score",
+        "reviewStatus": "Human Review Flag"
+      },
+      "priorityDetails": {
+        "safety": "Public Safety Risk (35%)",
+        "people": "Population Impact (25%)",
+        "urgency": "Urgency & SLA Age (20%)",
+        "repeat": "Repeat Reports & Clusters (20%)"
+      }
+    }
+  },
+  "admin": {
+    "cityOverview": {
+      "title": "City Command Center",
+      "subtitle": "Real-time Municipal Complaint Triage & Dispatch Overview",
+      "trendTitle": "Reports Inflow vs Resolution Trend",
+      "categoriesTitle": "Complaints by Category",
+      "overdueTitle": "Urgent SLA Breaches",
+      "recentActivity": "Live Municipal Activity Feed"
+    },
+    "queue": {
+      "title": "Ranked Priority Queue",
+      "subtitle": "Live multi-factor prioritized ticket dispatch stack",
+      "view3d": "3D Card Stack",
+      "viewTable": "Table View",
+      "bulkAssign": "Bulk Assign",
+      "assignTo": "Assign Department/Crew",
+      "filterArea": "All Districts",
+      "filterCategory": "All Categories"
+    },
+    "review": {
+      "title": "AI Review Queue",
+      "subtitle": "Low-confidence & text/vision disagreement cases requiring human triage",
+      "accept": "Accept Model Prediction",
+      "correct": "Correct Category"
+    },
+    "closure": {
+      "title": "Resolution Verification & Closure",
+      "subtitle": "Review field after-photos with automated geospatial and visual sanity flags",
+      "flagsTitle": "Automated Quality Flags",
+      "flagLocation": "GPS Location Match",
+      "flagCategory": "Visual Category Verified",
+      "flagSimilarity": "Structural Difference Verified",
+      "flagNotice": "Flags are automated suggestions only. Final determination rests with the admin.",
+      "approve": "Approve & Close Ticket",
+      "sendBack": "Send Back to Crew",
+      "reasonRequired": "Reason for rejection is required"
+    },
+    "hotspots": {
+      "title": "3D Geospatial Hotspots",
+      "subtitle": "Urban density clustering: Column height indicates priority, width reflects volume",
+      "liteMode": "Lite 2D Map",
+      "mode3d": "3D Hotspots",
+      "selectedHotspot": "Selected Hotspot Cluster"
+    },
+    "whatIf": {
+      "title": "What-if Sandbox",
+      "subtitle": "Simulate and test custom weights for priority scoring algorithm",
+      "safety": "Public Safety (Risk)",
+      "people": "Impact (People Affected)",
+      "urgency": "Urgency (Age vs SLA)",
+      "repeat": "Frequency (Repeat Reports)",
+      "reset": "Reset Defaults (35/25/20/20)",
+      "savePreset": "Save Preset",
+      "apply": "Apply Weights to Live Queue",
+      "notice": "Changes are temporary and only affect this view until applied."
+    },
+    "analytics": {
+      "title": "Municipal Analytics",
+      "subtitle": "Strategic KPIs, SLA compliance rates, and resolution efficiency",
+      "avgResolution": "Avg Resolution Time",
+      "slaCompliance": "SLA Compliance Rate",
+      "satisfaction": "Resident Satisfaction (Sample)",
+      "reopenRate": "Reopen Rate"
+    },
+    "settings": {
+      "title": "System Configuration",
+      "subtitle": "Municipal response thresholds, categories, and user management",
+      "tabs": {
+        "categories": "Categories & SLAs",
+        "weights": "Default Weights",
+        "sla": "SLA Policies",
+        "system": "System Thresholds",
+        "users": "User & Staff Accounts"
+      },
+      "addCategory": "Add New Category"
+    }
+  },
+  "login": {
+    "title": "Sign in to Smart Civic Complaint Triage System",
+    "subtitle": "Enter your credentials or register as a resident or municipal field crew",
+    "emailLabel": "Email, Phone or Badge ID",
+    "passwordLabel": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "signInBtn": "Sign In",
+    "switchRole": "Municipal Identity Verification",
+    "demoDesc": "Authorized access for Pakistani residents, field workers, and municipal command."
+  },
+  "credits": {
+    "title": "Image & Library Credits",
+    "subtitle": "Open-source software, datasets, and public infrastructure photographs",
+    "osm": "Map data © OpenStreetMap contributors under ODbL.",
+    "imagesTitle": "Photographic Assets",
+    "librariesTitle": "Open Source Frameworks & Tools"
+  },
+  "common": {
+    "loading": "Loading data...",
+    "error": "Failed to load data.",
+    "retry": "Retry",
+    "empty": "No items found.",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "close": "Close",
+    "view": "View Details",
+    "filter": "Filter",
+    "search": "Search...",
+    "all": "All",
+    "hours": "hours",
+    "days": "days",
+    "ago": "ago"
+  }
+}

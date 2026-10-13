@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1E8E6E;
+  --color-primary-dark: #166F57;
+  --color-primary-soft: #E6F4EF;
+  --color-surface-bg: #F5F8F7;
+  --color-surface-card: #FFFFFF;
+  --color-main-text: #14231F;
+  --color-muted-text: #6B7C77;
+  --color-app-border: #E3EAE7;
+
+  --color-priority-high-text: #E8731A;
+  --color-priority-high-bg: #FDEBD8;
+  --color-priority-med-text: #B88A0B;
+  --color-priority-med-bg: #FBF1D3;
+  --color-priority-low-text: #2E9E6B;
+  --color-priority-low-bg: #E3F5EC;
+
+  --color-status-progress-text: #2F7DD1;
+  --color-status-progress-bg: #E3EEFA;
+  --color-status-resolved-text: #2E9E6B;
+  --color-status-resolved-bg: #E3F5EC;
+  --color-status-hold-text: #D64545;
+  --color-status-hold-bg: #FBE6E6;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-nastaliq: 'Noto Nastaliq Urdu', serif;
+  --font-naskh: 'Noto Naskh Arabic', 'Inter', sans-serif;
+}
+
+:root {
+  --primary: #1E8E6E;
+  --primary-dark: #166F57;
+  --primary-soft: #E6F4EF;
+  --background: #F5F8F7;
+  --card: #FFFFFF;
+  --text: #14231F;
+  --muted: #6B7C77;
+  --border: #E3EAE7;
+}
+
+/* Base fonts and direction rules */
+html {
+  font-family: var(--font-sans);
+  background-color: var(--background);
+  color: var(--text);
+}
+
+/* When Urdu is active */
+html[lang="ur"] {
+  font-family: var(--font-naskh);
+}
+
+/* Headings and narrative paragraphs in Urdu use Nastaliq with extra line height */
+html[lang="ur"] h1,
+html[lang="ur"] h2,
+html[lang="ur"] h3,
+html[lang="ur"] h4,
+html[lang="ur"] h5,
+html[lang="ur"] h6,
+html[lang="ur"] .font-nastaliq-text,
+html[lang="ur"] p:not(.font-control) {
+  font-family: var(--font-nastaliq);
+  line-height: 2.1 !important;
+}
+
+/* Buttons, inputs, badges, tabs, tables in Urdu MUST use Noto Naskh Arabic so controls never clip */
+html[lang="ur"] button,
+html[lang="ur"] input,
+html[lang="ur"] select,
+html[lang="ur"] textarea,
+html[lang="ur"] .badge-text,
+html[lang="ur"] .tab-item,
+html[lang="ur"] table,
+html[lang="ur"] .font-control {
+  font-family: var(--font-naskh);
+  line-height: 1.5;
+}
+
+/* Digits, codes, emails isolation */
+.isolate-ltr {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  display: inline-block;
+}
+
+/* Subtle shadows as specified in prompt */
+.shadow-civic-sm {
+  box-shadow: 0 1px 2px rgba(20, 35, 31, 0.05);
+}
+
+.shadow-civic-card {
+  box-shadow: 0 1px 2px rgba(20, 35, 31, 0.04), 0 4px 12px rgba(20, 35, 31, 0.05);
+}
+
+.shadow-civic-lg {
+  box-shadow: 0 4px 6px rgba(20, 35, 31, 0.05), 0 10px 24px rgba(20, 35, 31, 0.08);
+}
+
+/* Map container styling */
+.leaflet-container {
+  font-family: inherit;
+  z-index: 10;
+}
+
+/* Glassmorphism & 3D styling */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 32px rgba(20, 35, 31, 0.06), 0 1px 3px rgba(20, 35, 31, 0.04);
+}
+
+.glass-card-interactive {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(245, 248, 247, 0.85) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 20px rgba(20, 35, 31, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.glass-card-interactive:hover {
+  transform: translateY(-3px) scale(1.008);
+  box-shadow: 0 12px 30px rgba(30, 142, 110, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.glass-pill {
+  background: rgba(230, 244, 239, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(30, 142, 110, 0.2);
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
