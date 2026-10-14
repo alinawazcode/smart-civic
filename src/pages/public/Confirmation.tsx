@@ -78,23 +78,122 @@ export const Confirmation: React.FC = () => {
           )}
         </div>
 
-        {/* QR Code */}
-        <div className="p-4 rounded-xl bg-[#F5F8F7] border border-[#E3EAE7] max-w-xs mx-auto space-y-3">
-          <div className="bg-white p-3 rounded-lg inline-block border border-[#E3EAE7] shadow-sm">
-            <QRCodeSVG value={trackUrl} size={130} level="M" />
+        {/* QR Code with Official Verification Pass Download */}
+        <div className="p-5 rounded-2xl bg-[#F5F8F7] border border-[#E3EAE7] max-w-sm mx-auto space-y-3.5">
+          <div className="bg-white p-3 rounded-xl inline-block border border-[#E3EAE7] shadow-sm">
+            <QRCodeSVG id="civic-qr-code" value={trackUrl} size={140} level="H" />
           </div>
-          <p className="text-xs text-[#6B7C77]">
-            {t('confirmation.qrCodeTitle')}
+          <p className="text-xs text-[#6B7C77] leading-relaxed">
+            Scan with any camera or WhatsApp to track complaint resolution live.
           </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-1">
+            <button
+              onClick={() => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 600;
+                canvas.height = 760;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+
+                // White canvas background
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, 600, 760);
+
+                // Pakistani dark green header
+                ctx.fillStyle = '#166F57';
+                ctx.fillRect(0, 0, 600, 115);
+
+                // Header text
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 19px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('ISLAMIC REPUBLIC OF PAKISTAN', 300, 44);
+
+                ctx.font = '14px sans-serif';
+                ctx.fillText('Smart Civic Complaint Triage & Municipal Dispatch', 300, 72);
+
+                ctx.font = '12px sans-serif';
+                ctx.fillStyle = '#C8EBD9';
+                ctx.fillText('Official Citizen Grievance Verification Pass', 300, 95);
+
+                // Card frame
+                ctx.strokeStyle = '#E3EAE7';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(30, 135, 540, 590);
+
+                // Code Banner
+                ctx.fillStyle = '#E6F4EF';
+                ctx.fillRect(50, 155, 500, 65);
+
+                ctx.fillStyle = '#166F57';
+                ctx.font = 'bold 28px monospace';
+                ctx.fillText(displayCode, 300, 198);
+
+                // Export QR from DOM SVG
+                const qrSvg = document.getElementById('civic-qr-code');
+                if (qrSvg) {
+                  const xml = new XMLSerializer().serializeToString(qrSvg);
+                  const svg64 = btoa(xml);
+                  const b64Start = 'data:image/svg+xml;base64,';
+                  const img = new Image();
+                  img.onload = () => {
+                    ctx.drawImage(img, 185, 240, 230, 230);
+
+                    // Sub details
+                    ctx.fillStyle = '#14231F';
+                    ctx.font = 'bold 16px sans-serif';
+                    ctx.fillText('Scan to Track Live SLA & Repair Progress', 300, 505);
+
+                    ctx.fillStyle = '#6B7C77';
+                    ctx.font = '13px sans-serif';
+                    ctx.fillText(`Issued: ${new Date().toLocaleDateString('en-PK')} · 24-72h SLA Target`, 300, 535);
+                    ctx.fillText(`Direct Verification: ${trackUrl}`, 300, 560);
+
+                    // Green stamp
+                    ctx.fillStyle = '#1E8E6E';
+                    ctx.font = 'bold 13px sans-serif';
+                    ctx.fillText('Verified Citizen Record · Karachi Municipal Command', 300, 665);
+
+                    const link = document.createElement('a');
+                    link.download = `CivicPass-${displayCode}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                  };
+                  img.src = b64Start + svg64;
+                }
+              }}
+              className="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-[#1E8E6E] hover:bg-[#166F57] text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <QrCode className="w-3.5 h-3.5" />
+              <span>Download QR Pass (PNG)</span>
+            </button>
+
+            <button
+              onClick={() => window.print()}
+              className="w-full sm:w-auto px-3 py-2 rounded-xl border border-[#E3EAE7] bg-white text-xs font-semibold text-[#14231F] hover:bg-[#F5F8F7] transition-colors"
+            >
+              Print Receipt
+            </button>
+          </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
           <Link to={`/track/${displayCode}`} className="w-full sm:w-auto">
-            <Button size="lg" className="w-full">
+            <Button size="lg" className="w-full font-bold shadow-md">
               {t('confirmation.viewDetails')}
             </Button>
           </Link>
+          <button
+            onClick={() => {
+              const msg = `Smart Civic Complaint ${displayCode} has been logged. Track repair progress here: ${trackUrl}`;
+              window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+            }}
+            className="w-full sm:w-auto px-5 py-3 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-sm font-bold hover:bg-emerald-100 transition-colors flex items-center justify-center gap-2"
+          >
+            <span>Share via WhatsApp</span>
+          </button>
           <Link to="/report" className="w-full sm:w-auto">
             <Button size="lg" variant="secondary" className="w-full">
               {t('confirmation.trackAnother')}

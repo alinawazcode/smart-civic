@@ -1,16 +1,38 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Upload, X, MapPin, Navigation, AlertCircle, CheckCircle, ArrowRight, ArrowLeft, Layers, Shield, Sparkles } from 'lucide-react';
+import {
+  Upload,
+  X,
+  MapPin,
+  Navigation,
+  AlertCircle,
+  CheckCircle,
+  ArrowRight,
+  ArrowLeft,
+  Layers,
+  Shield,
+  Sparkles,
+  User,
+  ShieldCheck,
+  UserCheck,
+  Lock,
+  Check,
+  Brain,
+  Link as LinkIcon
+} from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { CivicMap } from '../../components/common/LeafletMap';
 import { PriorityBadge } from '../../components/common/Badge';
+import { useRole } from '../../context/RoleContext';
 import { api, calculateDistanceMeters } from '../../lib/api';
 import { CategoryId, Ticket } from '../../types';
+import { findDuplicateComplaints, classifyComplaintTriage, DuplicateMatch, TriagePrediction } from '../../lib/triageModel';
 
 export const ReportIssue: React.FC = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { role, userName, userEmail } = useRole();
 
   // Multi-step state
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -30,11 +52,19 @@ export const ReportIssue: React.FC = () => {
   const [locationSearch, setLocationSearch] = useState('');
   const [locPermissionError, setLocPermissionError] = useState('');
   const [nearbyTickets, setNearbyTickets] = useState<Ticket[]>([]);
+  const [allTickets, setAllTickets] = useState<Ticket[]>([]);
+  const [duplicateMatches, setDuplicateMatches] = useState<DuplicateMatch[]>([]);
+  const [triagePrediction, setTriagePrediction] = useState<TriagePrediction | null>(null);
   const [clusterWithId, setClusterWithId] = useState<number | undefined>(undefined);
 
+  // Identity mode: Anonymous vs Verified Citizen
+  const [reportMode, setReportMode] = useState<'anonymous' | 'account'>(() => {
+    return role === 'resident' && userEmail ? 'account' : 'anonymous';
+  });
+
   // Review step state
-  const [anonymous, setAnonymous] = useState(false);
-  const [contact, setContact] = useState('');
+  const [anonymous, setAnonymous] = useState(() => !(role === 'resident' && userEmail));
+  const [contact, setContact] = useState(userEmail || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Validation errors
@@ -44,12 +74,49 @@ export const ReportIssue: React.FC = () => {
   const descRef = useRef<HTMLTextAreaElement>(null);
   const categoryRef = useRef<HTMLSelectElement>(null);
 
+  // Load all tickets for client-side semantic duplicate scanning
+  useEffect(() => {
+    api.listTickets().then((data) => {
+      setAllTickets(data);
+    });
+  }, []);
+
   // Check nearby tickets whenever location or category changes
   useEffect(() => {
     api.nearby(position[0], position[1], category).then((results) => {
       setNearbyTickets(results);
     });
   }, [position, category]);
+
+  // Real-time Semantic Duplicate Detection as user types or adjusts position
+  useEffect(() => {
+    if (description.trim().length >= 8 && allTickets.length > 0) {
+      const matches = findDuplicateComplaints(
+        description,
+        { lat: position[0], lng: position[1] },
+        category,
+        allTickets.map((t) => ({
+          id: t.id,
+          code: t.code,
+          text: t.text,
+          category: t.category,
+          status: t.status,
+          lat: t.lat,
+          lng: t.lng,
+          area: t.area
+        })),
+        0.55 // 55% similarity threshold
+      );
+      setDuplicateMatches(matches);
+
+      // AI triage recommendation
+      const triage = classifyComplaintTriage(description, category);
+      setTriagePrediction(triage);
+    } else {
+      setDuplicateMatches([]);
+      setTriagePrediction(null);
+    }
+  }, [description, category, position, allTickets]);
 
   // Adjust photo preview if user switches category initially and hasn't uploaded a file
   useEffect(() => {
@@ -178,7 +245,7 @@ export const ReportIssue: React.FC = () => {
       });
     } catch (e) {
       console.error(e);
-      alert('Failed to submit complaint. Please retry.');
+      setErrors((prev) => ({ ...prev, submit: 'Failed to submit complaint. Please retry.' }));
       setIsSubmitting(false);
     }
   };
@@ -193,6 +260,68 @@ export const ReportIssue: React.FC = () => {
         <p className="text-sm text-[#6B7C77] mt-1">
           {t('report.subtitle')}
         </p>
+      </div>
+
+      {/* Reporting Identity Selector: Anonymous vs Citizen Account */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#E3EAE7] shadow-civic-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-[#1E8E6E]" />
+            <span className="text-xs font-bold text-[#14231F] uppercase tracking-wider">
+              Citizen Reporting Option
+            </span>
+          </div>
+          <p className="text-xs text-[#6B7C77] mt-1">
+            {reportMode === 'anonymous'
+              ? 'Anonymous Submission: No personal identity or phone stored on municipal servers.'
+              : `Logged in Citizen: Reports are linked to your profile (${userName})`}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#F5F8F7] border border-[#E3EAE7] shrink-0 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => {
+              setReportMode('anonymous');
+              setAnonymous(true);
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              reportMode === 'anonymous'
+                ? 'bg-white text-[#166F57] shadow-xs border border-[#E3EAE7]'
+                : 'text-[#6B7C77] hover:text-[#14231F]'
+            }`}
+          >
+            <Shield className="w-3.5 h-3.5" />
+            <span>Report Anonymously</span>
+          </button>
+
+          {role === 'resident' && userEmail ? (
+            <button
+              type="button"
+              onClick={() => {
+                setReportMode('account');
+                setAnonymous(false);
+                setContact(userEmail);
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                reportMode === 'account'
+                  ? 'bg-[#1E8E6E] text-white shadow-xs'
+                  : 'text-[#6B7C77] hover:text-[#14231F]'
+              }`}
+            >
+              <UserCheck className="w-3.5 h-3.5" />
+              <span>Verified Citizen</span>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#1E8E6E] hover:bg-[#E6F4EF] transition-colors"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Sign In / Login</span>
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* 3-Step Stepper Navigation */}
@@ -225,7 +354,7 @@ export const ReportIssue: React.FC = () => {
                     : 'bg-[#F5F8F7] text-[#6B7C77] border border-[#E3EAE7]'
                 }`}
               >
-                {step > s.num ? '✓' : s.num}
+                {step > s.num ? <Check className="w-3.5 h-3.5" /> : s.num}
               </span>
               <span className="hidden sm:inline">{s.label}</span>
             </button>
@@ -318,6 +447,69 @@ export const ReportIssue: React.FC = () => {
               </span>
               <span className="font-mono">{description.length} / 1000</span>
             </div>
+
+            {/* Real-time Open-Source AI Semantic Duplicate Detection Alert */}
+            {duplicateMatches.length > 0 && (
+              <div className="mt-3 p-3.5 rounded-2xl bg-amber-50/80 border border-amber-300 shadow-xs space-y-2.5 animate-in fade-in">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Brain className="w-4 h-4 text-amber-700" />
+                    <span className="text-xs font-extrabold text-amber-900">
+                      Similar Grievance Detected ({duplicateMatches[0].similarityScore}% Match)
+                    </span>
+                  </div>
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
+                    Open-Source Model
+                  </span>
+                </div>
+                <p className="text-[11px] text-amber-800 leading-relaxed">
+                  Our lightweight semantic triage engine detected existing reports with similar municipal fault descriptions in this vicinity. Joining the existing grievance will reinforce urgency without duplicate truck dispatches.
+                </p>
+
+                <div className="space-y-2 pt-1">
+                  {duplicateMatches.slice(0, 2).map((match) => {
+                    const isJoined = clusterWithId === match.ticketId;
+                    return (
+                      <div
+                        key={match.ticketId}
+                        className={`p-2.5 rounded-xl border text-xs flex items-center justify-between gap-3 ${
+                          isJoined
+                            ? 'bg-[#E6F4EF] border-[#1E8E6E] text-[#14231F]'
+                            : 'bg-white border-amber-200 text-[#14231F]'
+                        }`}
+                      >
+                        <div className="min-w-0 space-y-0.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-xs">{match.ticketCode}</span>
+                            <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">
+                              {match.similarityScore}% Similar
+                            </span>
+                            {match.distanceMeters < 99999 && (
+                              <span className="text-[10px] text-[#6B7C77]">
+                                ~{match.distanceMeters}m away
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-[#6B7C77] truncate">{match.ticketText}</p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setClusterWithId(isJoined ? undefined : match.ticketId)}
+                          className={`px-2.5 py-1.5 rounded-lg text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                            isJoined
+                              ? 'bg-[#1E8E6E] text-white'
+                              : 'bg-white border border-[#E3EAE7] text-[#1E8E6E] hover:bg-[#E6F4EF]'
+                          }`}
+                        >
+                          {isJoined ? 'Joined Cluster' : 'Me Too / Upvote'}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Photo Upload with Drag & Drop */}
@@ -523,7 +715,10 @@ export const ReportIssue: React.FC = () => {
                             onClick={() => setClusterWithId(undefined)}
                             className="px-3 py-1.5 rounded-lg bg-[#1E8E6E] text-white text-xs font-semibold"
                           >
-                            ✓ Joined Cluster
+                            <span className="flex items-center gap-1">
+                              <Check className="w-3.5 h-3.5" />
+                              <span>Joined Cluster</span>
+                            </span>
                           </button>
                         ) : (
                           <Button
@@ -650,6 +845,13 @@ export const ReportIssue: React.FC = () => {
           <p className="text-xs text-[#6B7C77] italic">
             {t('report.review.terms')}
           </p>
+
+          {errors.submit && (
+            <div className="p-3 rounded-xl bg-[#FBE6E6] border border-[#F6C6C6] text-[#D64545] text-xs font-semibold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errors.submit}</span>
+            </div>
+          )}
 
           {/* Sticky Bottom Action Bar on Mobile / Standard Desktop */}
           <div className="pt-4 flex items-center justify-between border-t border-[#E3EAE7]">

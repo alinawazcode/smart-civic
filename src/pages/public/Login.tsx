@@ -83,17 +83,21 @@ export const Login: React.FC = () => {
         district: resDistrict
       });
 
+      setRole('resident');
       setCurrentUser({
         role: 'resident',
+        isLoggedIn: true,
         name: citizen.name,
-        email: citizen.email
+        email: citizen.email,
+        phone: citizen.phone,
+        cnic: citizen.cnic,
+        district: citizen.district
       });
-      setRole('resident');
       setFeedback({
         type: 'success',
-        msg: `Citizen profile verified for ${citizen.name}! Redirecting to Civic Portal...`
+        msg: `Citizen profile verified for ${citizen.name}! Loading Resident Dashboard...`
       });
-      setTimeout(() => navigate('/'), 700);
+      navigate('/resident');
     } else {
       const verify = AccountStore.verifyResidentLogin(resContact);
       if (!verify.canLogin) {
@@ -104,18 +108,59 @@ export const Login: React.FC = () => {
         return;
       }
       const acc = verify.account!;
+      setRole('resident');
       setCurrentUser({
         role: 'resident',
+        isLoggedIn: true,
         name: acc.name,
-        email: acc.email
+        email: acc.email,
+        phone: acc.phone,
+        cnic: acc.cnic,
+        district: acc.district,
+        address: acc.address
       });
-      setRole('resident');
       setFeedback({
         type: 'success',
-        msg: `Welcome back, ${acc.name}! Citizen account authenticated.`
+        msg: `Welcome back, ${acc.name}! Citizen account authenticated. Loading your grievances...`
       });
-      setTimeout(() => navigate('/'), 700);
+      navigate('/resident');
     }
+  };
+
+  // Instant 1-Click Resident Sign In
+  const handleInstantResidentSignIn = (name: string, phone: string, cnic: string, district: string) => {
+    setRole('resident');
+    setCurrentUser({
+      role: 'resident',
+      isLoggedIn: true,
+      name,
+      email: `${phone.replace(/\D/g, '')}@citizen.pk`,
+      phone,
+      cnic,
+      district,
+      address: 'Block 13-D, University Road'
+    });
+    setFeedback({
+      type: 'success',
+      msg: `Logged in as ${name}! Loading Resident Dashboard...`
+    });
+    navigate('/resident');
+  };
+
+  // Instant 1-Click Staff Sign In
+  const handleInstantStaffSignIn = () => {
+    setRole('staff');
+    setCurrentUser({
+      role: 'staff',
+      isLoggedIn: true,
+      name: 'Rashid Minhas',
+      email: 'rashid.field@kwsb.gov.pk',
+      phone: '0301-8291044',
+      badge: 'KWSB-8821',
+      department: 'KW&SB Water & Sanitation',
+      district: 'Karachi Central'
+    });
+    navigate('/staff');
   };
 
   // Handle Staff Login / Self-Registration (Staff can register, but MUST be approved by Admin!)
@@ -169,45 +214,59 @@ export const Login: React.FC = () => {
       }
 
       const acc = verify.account!;
+      setRole('staff');
       setCurrentUser({
         role: 'staff',
+        isLoggedIn: true,
         name: acc.name,
         email: acc.email,
         badge: acc.badgeNumber,
         department: acc.department
       });
-      setRole('staff');
       setFeedback({
         type: 'success',
         msg: `Verified: Officer ${acc.name} (${acc.department}). Loading Dispatch Queue...`
       });
-      setTimeout(() => navigate('/staff'), 750);
+      navigate('/staff');
     }
   };
 
-  // Handle Hidden Admin Login
+  // Handle Administrator Login with Secret Email & Key
   const handleAdminSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!adminKey || adminKey.length < 4) {
+    if (!adminId.trim() || !adminKey.trim()) {
       setFeedback({
         type: 'error',
-        msg: 'Invalid municipal administrator passcode.'
+        msg: 'Please enter both the Administrator Secret Email and Access Key.'
       });
       return;
     }
 
+    const verification = AccountStore.verifyAdminLogin(adminId, adminKey);
+    if (!verification.canLogin || !verification.account) {
+      setFeedback({
+        type: 'error',
+        msg: verification.message || 'Administrator authorization failed. Invalid email or secret key.'
+      });
+      return;
+    }
+
+    const admin = verification.account;
+    setRole('admin');
     setCurrentUser({
       role: 'admin',
-      name: 'Director Tariq Jameel',
-      email: adminId,
-      department: 'Karachi Municipal Corporation'
+      isLoggedIn: true,
+      name: admin.name,
+      email: admin.email,
+      department: admin.department,
+      district: admin.district || (admin.isSuperAdmin ? 'All Municipal Districts (Sovereign Central Scope)' : 'Karachi Central'),
+      isSuperAdmin: admin.isSuperAdmin
     });
-    setRole('admin');
     setFeedback({
       type: 'success',
-      msg: 'Municipal Command Center verified. Redirecting to Executive Overview...'
+      msg: `Verified: ${admin.name} (${admin.isSuperAdmin ? 'Chief Super Admin · Sovereign Central Scope' : `District Admin · ${admin.district || 'Karachi Central'}`}). Loading Command Center...`
     });
-    setTimeout(() => navigate('/admin'), 700);
+    navigate('/admin');
   };
 
   return (
@@ -439,6 +498,45 @@ export const Login: React.FC = () => {
               >
                 {residentMode === 'signup' ? 'Create Citizen Account' : 'Sign In as Resident'}
               </Button>
+
+              {/* Verified Citizen Profiles (1-Click Access) */}
+              <div className="p-2.5 rounded-2xl bg-[#F5F8F7] border border-[#E3EAE7] space-y-1.5">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#6B7C77] block">
+                  Verified Citizen Profiles (1-Click Access):
+                </span>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleInstantResidentSignIn(
+                        'Ayesha Siddiqui',
+                        '0300-2918273',
+                        '42101-8392183-2',
+                        'Karachi East (Gulshan-e-Iqbal)'
+                      )
+                    }
+                    className="text-start p-2 rounded-xl bg-white border border-[#E3EAE7] hover:border-[#1E8E6E] text-[11px] transition-colors cursor-pointer"
+                  >
+                    <span className="font-bold text-[#1E8E6E] block">Ayesha Siddiqui</span>
+                    <span className="text-[10px] text-[#6B7C77]">Gulshan-e-Iqbal</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleInstantResidentSignIn(
+                        'Muhammad Usman',
+                        '0333-8172635',
+                        '42201-1928374-1',
+                        'Karachi South (Clifton & DHA)'
+                      )
+                    }
+                    className="text-start p-2 rounded-xl bg-white border border-[#E3EAE7] hover:border-[#1E8E6E] text-[11px] transition-colors cursor-pointer"
+                  >
+                    <span className="font-bold text-[#14231F] block">Muhammad Usman</span>
+                    <span className="text-[10px] text-[#6B7C77]">Clifton & DHA</span>
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
         )}
@@ -633,45 +731,112 @@ export const Login: React.FC = () => {
               >
                 {staffMode === 'signup' ? 'Submit Staff Registration (Requires Admin Approval)' : 'Sign In as Municipal Staff'}
               </Button>
+
+              {/* Municipal Active Duty Personnel (1-Click Access) */}
+              <div className="p-2.5 rounded-2xl bg-[#F5F8F7] border border-[#E3EAE7] space-y-1.5">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#6B7C77] block">
+                  Municipal Active Duty Personnel (1-Click Access):
+                </span>
+                <button
+                  type="button"
+                  onClick={handleInstantStaffSignIn}
+                  className="w-full text-start p-2 rounded-xl bg-white border border-[#E3EAE7] hover:border-[#1E8E6E] text-[11px] transition-colors cursor-pointer"
+                >
+                  <span className="font-bold text-[#1E8E6E] block">Officer Rashid Minhas (Badge: KWSB-8821)</span>
+                  <span className="text-[10px] text-[#6B7C77]">KW&SB Water & Sanitation · Karachi Central</span>
+                </button>
+              </div>
             </form>
           </div>
         )}
 
-        {/* 3. HIDDEN MUNICIPAL ADMIN / COMMAND CENTER ACCESS */}
+        {/* 3. MUNICIPAL ADMIN & SUPER ADMIN COMMAND ACCESS */}
         {showAdminConsole && (
-          <form onSubmit={handleAdminSubmit} className="space-y-3.5">
-            <div className="p-3 rounded-xl bg-[#F5F8F7] border border-[#E3EAE7] text-xs text-[#6B7C77]">
-              Administrative command access is reserved for City Directors, Zonal Commissioners, and Triage Supervisors.
+          <form onSubmit={handleAdminSubmit} className="space-y-4">
+            <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs text-amber-900 space-y-1">
+              <div className="font-bold flex items-center gap-1.5 text-amber-950">
+                <ShieldCheck className="w-4 h-4 text-amber-700" />
+                <span>Executive Command Authorization</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-amber-800">
+                Restricted to authorized Municipal Officers, District Directors, and Central Command Super Admins.
+              </p>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-[#14231F] mb-1">
-                Director / Administrator ID
+                Authorized Secret Email
               </label>
-              <input
-                type="text"
-                required
-                value={adminId}
-                onChange={(e) => setAdminId(e.target.value)}
-                className="w-full min-h-[42px] px-3.5 py-2 rounded-xl border border-[#E3EAE7] bg-white text-xs text-[#14231F] focus:outline-none focus:ring-2 focus:ring-[#1E8E6E]"
-              />
+              <div className="relative">
+                <input
+                  type="email"
+                  required
+                  value={adminId}
+                  onChange={(e) => setAdminId(e.target.value)}
+                  placeholder="superadmin@civiccare.gov.pk"
+                  className="w-full min-h-[42px] ps-9 pe-3 py-2 rounded-xl border border-[#E3EAE7] bg-white text-xs text-[#14231F] focus:outline-none focus:ring-2 focus:ring-[#1E8E6E]"
+                />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#6B7C77] absolute start-3 top-1/2 -translate-y-1/2" />
+              </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-[#14231F] mb-1">
-                Admin Master Passcode
+                Secret Security Key
               </label>
-              <input
-                type="password"
-                required
-                value={adminKey}
-                onChange={(e) => setAdminKey(e.target.value)}
-                className="w-full min-h-[42px] px-3.5 py-2 rounded-xl border border-[#E3EAE7] bg-white text-xs text-[#14231F] focus:outline-none focus:ring-2 focus:ring-[#1E8E6E]"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={adminKey}
+                  onChange={(e) => setAdminKey(e.target.value)}
+                  placeholder="Enter Secret Key (e.g. CIVIC-SUPER-9921)"
+                  className="w-full min-h-[42px] ps-9 pe-9 py-2 rounded-xl border border-[#E3EAE7] bg-white text-xs text-[#14231F] font-mono focus:outline-none focus:ring-2 focus:ring-[#1E8E6E]"
+                />
+                <KeyRound className="w-3.5 h-3.5 text-[#6B7C77] absolute start-3 top-1/2 -translate-y-1/2" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute end-3 top-1/2 -translate-y-1/2 text-[#6B7C77] hover:text-[#14231F]"
+                >
+                  {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Authorized Command Key Profiles */}
+            <div className="p-2.5 rounded-xl bg-[#F5F8F7] border border-[#E3EAE7] space-y-1.5">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#6B7C77] block">
+                Authorized Command Profiles (1-Click Access):
+              </span>
+              <div className="flex flex-col sm:flex-row gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAdminId('superadmin@civiccare.gov.pk');
+                    setAdminKey('CIVIC-SUPER-9921');
+                  }}
+                  className="flex-1 text-start px-2 py-1.5 rounded-lg bg-white border border-[#E3EAE7] hover:border-[#1E8E6E] text-[11px] text-[#14231F] transition-colors"
+                >
+                  <span className="font-bold text-[#1E8E6E] block">Chief Super Admin</span>
+                  <span className="text-[10px] text-[#6B7C77]">Central Command · Sovereign Scope</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAdminId('admin.tariq@karachicity.gov.pk');
+                    setAdminKey('ADMIN-KMC-2026');
+                  }}
+                  className="flex-1 text-start px-2 py-1.5 rounded-lg bg-white border border-[#E3EAE7] hover:border-[#1E8E6E] text-[11px] text-[#14231F] transition-colors"
+                >
+                  <span className="font-bold text-[#14231F] block">District Administrator</span>
+                  <span className="text-[10px] text-[#6B7C77]">Karachi Central Jurisdiction</span>
+                </button>
+              </div>
             </div>
 
             <Button type="submit" size="md" className="w-full shadow-md font-bold">
-              Access Municipal Command Center
+              Verify Secret Key & Enter Command
             </Button>
           </form>
         )}

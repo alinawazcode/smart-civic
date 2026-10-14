@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, AlertTriangle, ShieldCheck, ArrowRight, RotateCcw } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, ShieldCheck, ArrowRight, RotateCcw, MapPin } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { BeforeAfterSlider } from '../../components/common/BeforeAfterSlider';
 import { PriorityBadge } from '../../components/common/Badge';
@@ -35,7 +35,8 @@ export const ClosureReview: React.FC = () => {
   const handleSendBack = async (id: number) => {
     const reason = reasons[id];
     if (!reason || !reason.trim()) {
-      alert(t('admin.closure.reasonRequired'));
+      setMsg(t('admin.closure.reasonRequired') || 'A rejection reason is required before sending back.');
+      setTimeout(() => setMsg(''), 4000);
       return;
     }
     await api.sendBack(id, reason);
@@ -87,8 +88,9 @@ export const ClosureReview: React.FC = () => {
                     <PriorityBadge priority={ticket.priorityLabel} />
                     <span className="text-xs font-semibold text-[#1E8E6E]">{ticket.category}</span>
                   </div>
-                  <p className="text-xs text-[#6B7C77]">
-                    📍 {ticket.area} · Crew: <strong>{ticket.assignedTo}</strong>
+                  <p className="text-xs text-[#6B7C77] flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-[#1E8E6E] shrink-0" />
+                    <span>{ticket.area} · Crew: <strong>{ticket.assignedTo}</strong></span>
                   </p>
                 </div>
                 <div className="text-start sm:text-end text-xs font-mono font-bold text-[#2E9E6B]">

@@ -13,7 +13,7 @@ import {
   BarChart2,
   Calendar
 } from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Button } from '../../components/common/Button';
 import { PriorityBadge, StatusBadge } from '../../components/common/Badge';
 import { Img } from '../../components/common/Img';
@@ -116,7 +116,10 @@ export const CityOverview: React.FC = () => {
         <div className="p-5 rounded-2xl bg-white border border-[#E3EAE7] shadow-civic-sm space-y-2">
           <div className="flex items-center justify-between text-xs font-semibold text-[#6B7C77]">
             <span>{t('home.stats.inProgress')}</span>
-            <span className="text-[#2F7DD1] font-bold">⏱️ Active</span>
+            <span className="text-[#2F7DD1] font-bold flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" />
+              <span>Active</span>
+            </span>
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-[#2F7DD1] font-mono">
             {inProgressCount.toLocaleString()}
@@ -127,7 +130,10 @@ export const CityOverview: React.FC = () => {
         <div className="p-5 rounded-2xl bg-white border border-[#E3EAE7] shadow-civic-sm space-y-2">
           <div className="flex items-center justify-between text-xs font-semibold text-[#6B7C77]">
             <span>SLA Breaches</span>
-            <span className="text-[#D64545] font-bold">⚠️ Urgent</span>
+            <span className="text-[#D64545] font-bold flex items-center gap-1">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>Urgent</span>
+            </span>
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-[#D64545] font-mono">
             {overdueCount}
@@ -161,21 +167,70 @@ export const CityOverview: React.FC = () => {
 
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trendData}>
+              <AreaChart data={trendData}>
+                <defs>
+                  <linearGradient id="totalGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#1E8E6E" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#1E8E6E" stopOpacity={0.0} />
+                  </linearGradient>
+                  <linearGradient id="resolvedGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2E9E6B" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#2E9E6B" stopOpacity={0.0} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E3EAE7" />
-                <XAxis dataKey="date" stroke="#6B7C77" fontSize={11} />
-                <YAxis stroke="#6B7C77" fontSize={11} />
+                <XAxis dataKey="date" stroke="#6B7C77" fontSize={11} tickLine={false} />
+                <YAxis stroke="#6B7C77" fontSize={11} tickLine={false} />
                 <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#FFFFFF',
-                    borderRadius: '8px',
-                    border: '1px solid #E3EAE7',
-                    fontSize: '12px'
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      const total = payload[0].value as number;
+                      const resolved = payload[1]?.value as number || 0;
+                      const rate = total > 0 ? Math.round((resolved / total) * 100) : 100;
+                      return (
+                        <div className="p-3 bg-white/95 backdrop-blur-md rounded-xl border border-[#E3EAE7] shadow-lg text-xs space-y-1.5 animate-in fade-in zoom-in-95">
+                          <span className="font-bold text-[#14231F] block border-b border-[#E3EAE7] pb-1">
+                            {label} 2026 · Daily Dispatch
+                          </span>
+                          <div className="flex items-center justify-between gap-4">
+                            <span className="text-[#6B7C77] flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-[#1E8E6E]" /> Total Reports:
+                            </span>
+                            <span className="font-mono font-bold text-[#14231F]">{total}</span>
+                          </div>
+                          <div className="flex items-center justify-between gap-4">
+                            <span className="text-[#6B7C77] flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-[#2E9E6B]" /> Resolved:
+                            </span>
+                            <span className="font-mono font-bold text-[#2E9E6B]">{resolved}</span>
+                          </div>
+                          <div className="flex items-center justify-between gap-4 pt-1 border-t border-[#E3EAE7] text-[11px]">
+                            <span className="text-[#6B7C77]">Resolution Rate:</span>
+                            <span className="font-mono font-extrabold text-[#1E8E6E]">{rate}%</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
                   }}
                 />
-                <Line type="monotone" dataKey="total" stroke="#1E8E6E" strokeWidth={2.5} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="resolved" stroke="#2E9E6B" strokeWidth={2} dot={{ r: 3 }} />
-              </LineChart>
+                <Area
+                  type="monotone"
+                  dataKey="total"
+                  stroke="#1E8E6E"
+                  strokeWidth={2.5}
+                  fill="url(#totalGrad)"
+                  activeDot={{ r: 6, fill: '#1E8E6E', stroke: '#FFFFFF', strokeWidth: 2 }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="resolved"
+                  stroke="#2E9E6B"
+                  strokeWidth={2}
+                  fill="url(#resolvedGrad)"
+                  activeDot={{ r: 5, fill: '#2E9E6B', stroke: '#FFFFFF', strokeWidth: 2 }}
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -287,7 +342,10 @@ export const CityOverview: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-xs font-bold text-[#14231F]">{t.code}</span>
                     <PriorityBadge priority={t.priorityLabel} />
-                    <span className="text-[10px] text-[#D64545] font-bold">⚠️ EXCEEDED 72H</span>
+                    <span className="text-[10px] text-[#D64545] font-bold flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      <span>EXCEEDED 72H</span>
+                    </span>
                   </div>
                   <p className="text-xs text-[#14231F] truncate font-medium">{t.text}</p>
                 </div>

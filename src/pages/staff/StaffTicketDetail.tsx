@@ -14,7 +14,8 @@ import {
   FileText,
   Shield,
   Layers,
-  ChevronDown
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { PriorityBadge, StatusBadge } from '../../components/common/Badge';
@@ -353,8 +354,18 @@ export const StaffTicketDetail: React.FC = () => {
             <span>
               <strong>Fused Result:</strong> {t(`categories.${ticket.category}`)}
             </span>
-            <span>
-              {ticket.needsReview ? '⚠️ Flagged for Admin Review' : '✓ Direct Automation Pass'}
+            <span className="flex items-center gap-1 font-semibold">
+              {ticket.needsReview ? (
+                <>
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Flagged for Admin Review</span>
+                </>
+              ) : (
+                <>
+                  <Check className="w-3.5 h-3.5 text-[#1E8E6E]" />
+                  <span>Direct Automation Pass</span>
+                </>
+              )}
             </span>
           </div>
         </div>

@@ -12,7 +12,8 @@ import {
   UserPlus,
   ArrowRight,
   Sparkles,
-  ChevronDown
+  ChevronDown,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { PriorityBadge, StatusBadge } from '../../components/common/Badge';
@@ -267,8 +268,18 @@ export const RankedQueue: React.FC = () => {
               {/* SLA & Assign footer */}
               <div className="flex items-center justify-between text-xs pt-1">
                 <div className="flex items-center gap-1 text-[11px] font-mono font-bold">
-                  <span className={t.overdue ? 'text-[#D64545]' : 'text-[#2E9E6B]'}>
-                    {t.overdue ? '⚠️ SLA Breached' : '⏱️ 48h SLA'}
+                  <span className={`flex items-center gap-1 ${t.overdue ? 'text-[#D64545]' : 'text-[#2E9E6B]'}`}>
+                    {t.overdue ? (
+                      <>
+                        <AlertTriangle className="w-3 h-3" />
+                        <span>SLA Breached</span>
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="w-3 h-3" />
+                        <span>48h SLA</span>
+                      </>
+                    )}
                   </span>
                   {t.reportCount > 1 && (
                     <span className="px-1.5 py-0.5 rounded bg-[#E6F4EF] text-[#1E8E6E] text-[10px]">
@@ -369,8 +380,18 @@ export const RankedQueue: React.FC = () => {
                       {t.assignedTo || 'Unassigned'}
                     </td>
                     <td className="p-3 whitespace-nowrap font-mono font-bold">
-                      <span className={t.overdue ? 'text-[#D64545]' : 'text-[#2E9E6B]'}>
-                        {t.overdue ? '⚠️ Overdue' : '⏱️ On Track'}
+                      <span className={`flex items-center gap-1 ${t.overdue ? 'text-[#D64545]' : 'text-[#2E9E6B]'}`}>
+                        {t.overdue ? (
+                          <>
+                            <AlertTriangle className="w-3 h-3" />
+                            <span>Overdue</span>
+                          </>
+                        ) : (
+                          <>
+                            <Clock className="w-3 h-3" />
+                            <span>On Track</span>
+                          </>
+                        )}
                       </span>
                     </td>
                     <td className="p-3 text-end whitespace-nowrap">

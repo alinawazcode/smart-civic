@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, MapPin, Clock, CheckCircle2, AlertTriangle, Layers, Calendar, User, ArrowRight, ShieldCheck, RotateCcw } from 'lucide-react';
+import {
+  Search,
+  MapPin,
+  Clock,
+  CheckCircle2,
+  AlertTriangle,
+  Layers,
+  Calendar,
+  User,
+  ArrowRight,
+  ShieldCheck,
+  RotateCcw,
+  QrCode,
+  Printer,
+  Copy,
+  Check,
+  Share2
+} from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { Button } from '../../components/common/Button';
 import { PriorityBadge, StatusBadge } from '../../components/common/Badge';
 import { Img } from '../../components/common/Img';
@@ -20,6 +38,8 @@ export const TrackComplaint: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [confirmedFixed, setConfirmedFixed] = useState(false);
   const [reopenNotice, setReopenNotice] = useState('');
+  const [quickTickets, setQuickTickets] = useState<Ticket[]>([]);
+  const [copiedCode, setCopiedCode] = useState(false);
 
   const executeTrack = async (codeToSearch: string) => {
     if (!codeToSearch.trim()) return;
@@ -44,6 +64,9 @@ export const TrackComplaint: React.FC = () => {
       // Default to Hero ticket for initial viewing if no code entered
       executeTrack('CC-2026-001238');
     }
+    api.listTickets().then((all) => {
+      setQuickTickets(all.slice(0, 5));
+    });
   }, [urlCode]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -121,6 +144,31 @@ export const TrackComplaint: React.FC = () => {
         </Button>
       </form>
 
+      {/* Quick Select Complaints */}
+      {quickTickets.length > 0 && (
+        <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-xs">
+          <span className="text-[#6B7C77] font-semibold text-[11px]">Quick Track:</span>
+          {quickTickets.map((qt) => (
+            <button
+              key={qt.id}
+              type="button"
+              onClick={() => {
+                setInputCode(qt.code);
+                navigate(`/track/${qt.code}`);
+                executeTrack(qt.code);
+              }}
+              className={`px-2.5 py-1 rounded-lg border font-mono text-[11px] font-bold transition-all cursor-pointer ${
+                ticket?.code === qt.code
+                  ? 'bg-[#E6F4EF] border-[#1E8E6E] text-[#166F57]'
+                  : 'bg-white border-[#E3EAE7] text-[#14231F] hover:border-[#1E8E6E]'
+              }`}
+            >
+              {qt.code}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Not Found State */}
       {hasSearched && !isLoading && !ticket && (
         <div className="p-8 rounded-2xl bg-white border border-[#E3EAE7] text-center space-y-3 shadow-civic-sm">
@@ -170,8 +218,18 @@ export const TrackComplaint: React.FC = () => {
               <div className="text-[11px] font-semibold uppercase tracking-wider text-[#6B7C77]">
                 {t('track.details.slaRemaining')}
               </div>
-              <div className={`text-sm font-bold font-mono ${ticket.overdue ? 'text-[#D64545]' : 'text-[#2E9E6B]'}`}>
-                {ticket.overdue ? `⚠️ ${t('track.details.overdue')}` : `⏱️ ${t('track.details.onTime')}`}
+              <div className={`flex items-center sm:justify-end gap-1 text-sm font-bold font-mono ${ticket.overdue ? 'text-[#D64545]' : 'text-[#2E9E6B]'}`}>
+                {ticket.overdue ? (
+                  <>
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>{t('track.details.overdue')}</span>
+                  </>
+                ) : (
+                  <>
+                    <Clock className="w-4 h-4" />
+                    <span>{t('track.details.onTime')}</span>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -204,14 +262,133 @@ export const TrackComplaint: React.FC = () => {
               </div>
             </div>
 
-            <div className="md:col-span-4">
-              <div className="rounded-xl overflow-hidden border border-[#E3EAE7]">
+            <div className="md:col-span-4 space-y-4">
+              <div className="rounded-xl overflow-hidden border border-[#E3EAE7] shadow-2xs">
                 <Img
                   src={ticket.beforePhoto}
                   alt="Reported problem photograph"
                   aspectRatio="aspect-[4/3]"
                   className="w-full h-full"
                 />
+              </div>
+
+              {/* Official QR Pass Card */}
+              <div className="p-4 rounded-2xl bg-[#F5F8F7] border border-[#E3EAE7] text-center space-y-3">
+                <div className="bg-white p-2.5 rounded-xl inline-block border border-[#E3EAE7] shadow-sm">
+                  <QRCodeSVG
+                    id="track-qr-code"
+                    value={`${typeof window !== 'undefined' ? window.location.origin : ''}/track/${ticket.code}`}
+                    size={110}
+                    level="H"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-[#6B7C77] tracking-wider block">
+                    Municipal Verification Pass
+                  </span>
+                  <span className="text-xs font-mono font-extrabold text-[#1E8E6E] block select-all">
+                    {ticket.code}
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const canvas = document.createElement('canvas');
+                      canvas.width = 600;
+                      canvas.height = 760;
+                      const ctx = canvas.getContext('2d');
+                      if (!ctx) return;
+
+                      ctx.fillStyle = '#FFFFFF';
+                      ctx.fillRect(0, 0, 600, 760);
+
+                      ctx.fillStyle = '#166F57';
+                      ctx.fillRect(0, 0, 600, 115);
+
+                      ctx.fillStyle = '#FFFFFF';
+                      ctx.font = 'bold 19px sans-serif';
+                      ctx.textAlign = 'center';
+                      ctx.fillText('ISLAMIC REPUBLIC OF PAKISTAN', 300, 44);
+
+                      ctx.font = '14px sans-serif';
+                      ctx.fillText('Smart Civic Complaint Triage & Municipal Dispatch', 300, 72);
+
+                      ctx.font = '12px sans-serif';
+                      ctx.fillStyle = '#C8EBD9';
+                      ctx.fillText('Official Citizen Grievance Verification Pass', 300, 95);
+
+                      ctx.strokeStyle = '#E3EAE7';
+                      ctx.lineWidth = 2;
+                      ctx.strokeRect(30, 135, 540, 590);
+
+                      ctx.fillStyle = '#E6F4EF';
+                      ctx.fillRect(50, 155, 500, 65);
+
+                      ctx.fillStyle = '#166F57';
+                      ctx.font = 'bold 28px monospace';
+                      ctx.fillText(ticket.code, 300, 198);
+
+                      const qrSvg = document.getElementById('track-qr-code');
+                      if (qrSvg) {
+                        const xml = new XMLSerializer().serializeToString(qrSvg);
+                        const svg64 = btoa(xml);
+                        const b64Start = 'data:image/svg+xml;base64,';
+                        const img = new Image();
+                        img.onload = () => {
+                          ctx.drawImage(img, 185, 240, 230, 230);
+
+                          ctx.fillStyle = '#14231F';
+                          ctx.font = 'bold 16px sans-serif';
+                          ctx.fillText('Scan to Track Live SLA & Repair Progress', 300, 505);
+
+                          ctx.fillStyle = '#6B7C77';
+                          ctx.font = '13px sans-serif';
+                          ctx.fillText(`Issued: ${new Date(ticket.createdAt).toLocaleDateString('en-PK')} · 24-72h SLA Target`, 300, 535);
+                          ctx.fillText(`Area: ${ticket.area} · Category: ${ticket.category}`, 300, 560);
+
+                          ctx.fillStyle = '#1E8E6E';
+                          ctx.font = 'bold 13px sans-serif';
+                          ctx.fillText('Verified Citizen Record · Karachi Municipal Command', 300, 665);
+
+                          const link = document.createElement('a');
+                          link.download = `CivicPass-${ticket.code}.png`;
+                          link.href = canvas.toDataURL('image/png');
+                          link.click();
+                        };
+                        img.src = b64Start + svg64;
+                      }
+                    }}
+                    className="w-full px-3 py-2 rounded-xl bg-[#1E8E6E] hover:bg-[#166F57] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                  >
+                    <QrCode className="w-3.5 h-3.5" />
+                    <span>Download QR Pass (PNG)</span>
+                  </button>
+
+                  <div className="flex gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="flex-1 px-2.5 py-1.5 rounded-xl border border-[#E3EAE7] bg-white text-xs font-semibold text-[#14231F] hover:bg-[#F5F8F7] flex items-center justify-center gap-1"
+                    >
+                      <Printer className="w-3.5 h-3.5 text-[#6B7C77]" />
+                      <span>Print</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentUrl = `${window.location.origin}/track/${ticket.code}`;
+                        const msg = `Smart Civic Complaint ${ticket.code} status: ${ticket.status}. Track progress: ${currentUrl}`;
+                        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+                      }}
+                      className="flex-1 px-2.5 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50 text-xs font-bold text-emerald-800 hover:bg-emerald-100 flex items-center justify-center gap-1"
+                    >
+                      <Share2 className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Share</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -239,7 +416,7 @@ export const TrackComplaint: React.FC = () => {
                           : 'bg-white border-2 border-[#E3EAE7] text-[#6B7C77]'
                       }`}
                     >
-                      {isCompleted ? '✓' : index + 1}
+                      {isCompleted ? <Check className="w-4 h-4" /> : index + 1}
                     </div>
 
                     <div className="flex-1 pt-0.5">

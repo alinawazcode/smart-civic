@@ -22,6 +22,7 @@ import { Button } from '../../components/common/Button';
 import { PriorityBadge } from '../../components/common/Badge';
 import { Img } from '../../components/common/Img';
 import { BeforeAfterSlider } from '../../components/common/BeforeAfterSlider';
+import { PakistanFlag } from '../../components/common/FlagIcons';
 import { api } from '../../lib/api';
 
 export const Landing: React.FC = () => {
@@ -80,15 +81,14 @@ export const Landing: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6">
-              {/* AI Triage Status Chip */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6F4EF] text-[#166F57] text-xs font-bold border border-[#C8EBD9] shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-[#1E8E6E] animate-pulse" />
-                <Bot className="w-3.5 h-3.5 text-[#1E8E6E]" />
-                <span>AI Automated Triage Active · Karachi & Federal Capitals</span>
+              {/* Catchy Pakistani Civic Tagline & Regional Banner */}
+              <div className="flex items-center gap-2 text-xs font-bold text-[#1E8E6E]">
+                <PakistanFlag className="w-5 h-3.5" />
+                <span className="tracking-wide">{t('brand.tagline')}</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#14231F] leading-[1.15]">
-                {t('home.heroTitle')}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-[#14231F] leading-[1.15]" style={{ textWrap: 'balance' }}>
+                {t('brand.heroTitle')}
               </h1>
 
               <p className="text-base sm:text-lg text-[#6B7C77] leading-relaxed max-w-xl">
@@ -98,31 +98,24 @@ export const Landing: React.FC = () => {
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link to="/report">
-                  <Button size="lg" className="shadow-[0_8px_24px_rgba(30,142,110,0.32)] hover:shadow-[0_12px_32px_rgba(30,142,110,0.45)] hover:scale-102 transition-all">
+                  <Button size="lg" className="shadow-[0_8px_24px_rgba(30,142,110,0.32)] hover:shadow-[0_12px_32px_rgba(30,142,110,0.45)] hover:scale-102 transition-all font-bold">
                     {t('home.reportCta')}
                   </Button>
                 </Link>
                 <Link to="/track">
-                  <Button size="lg" variant="secondary" className="hover:border-[#1E8E6E] hover:text-[#1E8E6E] transition-all">
+                  <Button size="lg" variant="secondary" className="hover:border-[#1E8E6E] hover:text-[#1E8E6E] transition-all font-bold">
                     {t('home.trackCta')}
                   </Button>
                 </Link>
               </div>
 
-              {/* Trust Markers with AI Confidence Tags */}
-              <div className="pt-4 flex flex-wrap items-center gap-4 text-xs font-medium text-[#6B7C77]">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 border border-[#E3EAE7] shadow-2xs hover:border-[#1E8E6E] hover:text-[#1E8E6E] transition-colors">
-                  <Sparkles className="w-3.5 h-3.5 text-[#1E8E6E]" />
-                  <span>AI Triage: 98.4% Precision</span>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 border border-[#E3EAE7] shadow-2xs hover:border-[#1E8E6E] hover:text-[#1E8E6E] transition-colors">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#1E8E6E]" />
-                  <span>50m Spatial Clustering</span>
-                </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/80 border border-[#E3EAE7] shadow-2xs hover:border-[#1E8E6E] hover:text-[#1E8E6E] transition-colors">
-                  <Clock className="w-3.5 h-3.5 text-[#1E8E6E]" />
-                  <span>SLA Due within 24-72h</span>
-                </div>
+              {/* Clean Trust Metadata with Typographic Separators (Zero Pill Discipline) */}
+              <div className="pt-4 flex flex-wrap items-center gap-3 text-xs text-[#6B7C77]">
+                <span className="font-semibold text-[#14231F]">98.4% Triage Precision</span>
+                <span aria-hidden="true" className="text-[#A3B8B0]">·</span>
+                <span className="font-semibold text-[#14231F]">50m Spatial Clustering</span>
+                <span aria-hidden="true" className="text-[#A3B8B0]">·</span>
+                <span className="font-semibold text-[#14231F]">24-72h Municipal SLA Guarantee</span>
               </div>
             </div>
 
@@ -439,7 +432,10 @@ export const Landing: React.FC = () => {
               afterAlt="Repaired asphalt surface in Karachi"
             />
             <div className="text-xs text-[#6B7C77] flex items-center justify-between font-medium">
-              <span>📍 Korangi Sector 15 · Sindh C&W Roads</span>
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-[#1E8E6E]" />
+                <span>Korangi Sector 15 · Sindh C&W Roads</span>
+              </span>
               <span className="text-[#1E8E6E] font-bold">Verified by Municipal Inspector</span>
             </div>
           </div>
@@ -462,7 +458,10 @@ export const Landing: React.FC = () => {
               afterAlt="Cleared & disinfected site by KMC"
             />
             <div className="text-xs text-[#6B7C77] flex items-center justify-between font-medium">
-              <span>📍 PECHS Block 2 · Solid Waste Management</span>
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-[#1E8E6E]" />
+                <span>PECHS Block 2 · Solid Waste Management</span>
+              </span>
               <span className="text-[#1E8E6E] font-bold">Verified by Municipal Inspector</span>
             </div>
           </div>

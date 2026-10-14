@@ -10,7 +10,8 @@ import {
   Merge,
   ShieldCheck,
   UserCheck,
-  ChevronDown
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { PriorityBadge, StatusBadge } from '../../components/common/Badge';
@@ -55,7 +56,8 @@ export const AdminTicketDetail: React.FC = () => {
 
   const handleSendBack = async () => {
     if (!rejectionReason.trim()) {
-      alert(t('admin.closure.reasonRequired'));
+      setMsg(t('admin.closure.reasonRequired') || 'A rejection reason is required before sending back.');
+      setTimeout(() => setMsg(''), 4000);
       return;
     }
     const updated = await api.sendBack(ticket.id, rejectionReason);
@@ -152,15 +154,24 @@ export const AdminTicketDetail: React.FC = () => {
               <div className="p-3 rounded-xl bg-[#F5F8F7] border border-[#E3EAE7] space-y-2 text-xs">
                 <span className="font-bold text-[#14231F] block">{t('admin.closure.flagsTitle')}</span>
                 <div className="flex items-center justify-between text-[#2E9E6B]">
-                  <span>✓ {t('admin.closure.flagLocation')}</span>
+                  <span className="flex items-center gap-1">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>{t('admin.closure.flagLocation')}</span>
+                  </span>
                   <span className="font-mono">14m delta</span>
                 </div>
                 <div className="flex items-center justify-between text-[#2E9E6B]">
-                  <span>✓ {t('admin.closure.flagCategory')}</span>
+                  <span className="flex items-center gap-1">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>{t('admin.closure.flagCategory')}</span>
+                  </span>
                   <span className="font-mono">Match (95%)</span>
                 </div>
                 <div className="flex items-center justify-between text-[#2E9E6B]">
-                  <span>✓ {t('admin.closure.flagSimilarity')}</span>
+                  <span className="flex items-center gap-1">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>{t('admin.closure.flagSimilarity')}</span>
+                  </span>
                   <span className="font-mono">Pass</span>
                 </div>
                 <p className="text-[10px] text-[#6B7C77] italic pt-1 border-t border-[#E3EAE7]">

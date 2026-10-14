@@ -24,6 +24,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { AppLogo } from '../common/AppLogo';
+import { PakistanFlag, USFlag } from '../common/FlagIcons';
 import { useRole } from '../../context/RoleContext';
 import { Role } from '../../types';
 
@@ -65,7 +66,7 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({ portalType }) => {
   const navItems = portalType === 'staff' ? staffNavItems : adminNavItems;
 
   const handleLogout = () => {
-    setRole('resident');
+    logout();
     navigate('/login');
   };
 
@@ -197,13 +198,18 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({ portalType }) => {
 
           {/* Top Bar Right Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Language Switcher */}
+            {/* Language Switcher with Official Pakistan and US Flags */}
             <button
               onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'ur' : 'en')}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#E3EAE7] text-xs font-semibold hover:bg-[#F5F8F7]"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E3EAE7] bg-white text-xs font-bold hover:bg-[#F5F8F7] hover:border-[#1E8E6E]/40 transition-colors shadow-2xs"
+              title="Toggle English / Urdu"
             >
-              <Globe className="w-3.5 h-3.5 text-[#1E8E6E]" />
-              <span>{i18n.language === 'en' ? 'اردو' : 'EN'}</span>
+              {i18n.language === 'en' ? (
+                <PakistanFlag className="w-5 h-3.5" />
+              ) : (
+                <USFlag className="w-5 h-3.5" />
+              )}
+              <span>{i18n.language === 'en' ? 'اردو' : 'English'}</span>
             </button>
 
             {/* Notifications Bell */}

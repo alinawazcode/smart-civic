@@ -14,6 +14,7 @@ import { TrackComplaint } from './pages/public/TrackComplaint';
 import { Transparency } from './pages/public/Transparency';
 import { ModelReport } from './pages/public/ModelReport';
 import { Login } from './pages/public/Login';
+import { ResidentDashboard } from './pages/public/ResidentDashboard';
 import { Credits } from './pages/public/Credits';
 import { NotFound } from './pages/public/NotFound';
 
@@ -58,6 +59,7 @@ export function App() {
               <Route path="/transparency" element={<Transparency />} />
               <Route path="/model-report" element={<ModelReport />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/resident" element={<ResidentDashboard />} />
               <Route path="/credits" element={<Credits />} />
             </Route>
 

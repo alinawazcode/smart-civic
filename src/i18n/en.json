@@ -2,11 +2,11 @@
   "brand": {
     "name": "Smart Civic Complaint Triage System",
     "shortName": "Smart Civic",
-    "tagline": "Cleaner Streets · Safer Communities · A Smarter City",
-    "heroTitle": "Report. Track. See Real Change.",
-    "heroDesc": "Report street infrastructure issues in seconds. Our AI-assisted triage system clusters duplicates, assesses public safety risk, and dispatches municipal crews quickly.",
+    "tagline": "From Broken Streets to Restored Beats: Real-Time Civic Governance for Pakistan",
+    "heroTitle": "Every Street Heard. Every Pothole Fixed. Real-Time Civic Action.",
+    "heroDesc": "Report street infrastructure issues in seconds. Our automated triage clusters duplicates within 50m, prioritizes safety risks, and dispatches municipal crews with live SLA tracking.",
     "demoNotice": "Official Municipal Complaint & Dispatch Portal",
-    "sampleData": "Official records"
+    "sampleData": "Verified municipal records"
   },
   "nav": {
     "home": "Home",
